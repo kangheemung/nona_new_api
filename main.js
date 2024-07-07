@@ -2,15 +2,19 @@ const API_KEY = `474e84f656e2471a85bcbe8ad971e094`;
 
 const getLatestNews = async () => {
 const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
-        const response = await fetch(url);
+        
+try { const response = await fetch(url);
         console.log("rrr",response)
         const data = await response.json();
         news = data.articles;
         console.log("ddd",news);
       //  console.log(data);
        // render(data.articles);
- 
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
 };
+
 //프린트해봅시다.
 
 getLatestNews();
