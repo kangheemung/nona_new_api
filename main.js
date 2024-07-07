@@ -4,8 +4,11 @@ let newsList = [];
 const getLatestNews = async () => {
     const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
     const response = await fetch(url);
+    console.log(response );
     const data = await response.json();
+    console.log(data);
     newsList = data.articles;
+    console.log(newsList);
     render();
 };
 getLatestNews();
