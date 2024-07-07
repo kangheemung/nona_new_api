@@ -35,7 +35,7 @@ const render=()=>{
                  ${news.source.name}*${news.publichedAt}
     
           </div>`
-      );
+      ).join("");
     document.getElementById("news-board").innerHTML =newsHTML;
   };
 //프린트해봅시다.
