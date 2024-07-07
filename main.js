@@ -1,19 +1,23 @@
-const API_KEY = `474e84f656e2471a85bcbe8ad971e094`;
+const fetch = require('node-fetch');
+const API_KEY = `581de57429b4469fb96dc6b412a811b2`;
+const newsList = [];
 
 const getLatestNews = async () => {
 const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
-        
-try { const response = await fetch(url);
-        console.log("rrr",response)
-        const data = await response.json();
-        newsList = data.articles;
-        console.log("ddd",newsList);
-        render();
-      //  console.log(data);
-       // render(data.articles);
-    } catch (error) {
-        console.error('Error fetching data:', error);
+
+try {
+    const response = await fetch(url, { method: 'GET', mode: 'cors', redirect: 'follow' });
+    
+    if (!response.ok) {
+        throw new Error('Failed to fetch data');
     }
+    
+    const data = await response.json();
+    newsList.push(...data.articles);
+    console.log("Data:", data.articles);
+} catch (error) {
+    console.error('Error fetching data:', error);
+}
 };
 
 //프린트해봅시다.
