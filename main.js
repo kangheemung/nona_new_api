@@ -1,14 +1,13 @@
+const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
 const API_KEY = `581de57429b4469fb96dc6b412a811b2`;
 
 const getLatestNews = async () => {
-const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
+    const url = new URL(`${PROXY_URL}https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
 
-const response = await fetch(url);
-        console.log("rrr",response)
-        const data = await response.json();
-        newsList = data.articles;
-        console.log("ddd",newsList);
-        render();
+    const response = await fetch(url);
+    const data = await response.json();
+    newsList = data.articles;
+    render();
       //  console.log(data);
        // render(data.articles);
 };
