@@ -12,7 +12,6 @@ const getLatestNews = async () => {
         const data = await response.json();
        console.log(data);
         newsList = data.articles;
-        
         render();
     } catch (error) {
         console.error('Error fetching or parsing data:', error.message);
@@ -21,14 +20,10 @@ const getLatestNews = async () => {
 getLatestNews();
       //  console.log(data);
       // render(data.newsList);
-
-
 //프린트해봅시다.
-
 const render = () => {
     const newsHTML = newsList.map(news=>{
-        const imageSrc = news.urlToImage ? news.urlToImage : '<img class="news_size" src="no-pictures.png"/>';
-
+        const imageSrc = news.urlToImage ||"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU";
         const summary = news.description && news.description.length > 200 ? news.description.substring(0, 200) + '...' : news.description || '내용없음';
         const sourceName = news.source.name || 'no source';
         const publishedTime = moment(news.publishedAt, "YYYYMMDD").fromNow();
