@@ -1,7 +1,35 @@
 
 const API_KEY = `474e84f656e2471a85bcbe8ad971e094`;
-let newsList = [];
-const menus =document.querySelectorAll(".menus button");
+const input_go = document.getElementById("input_go");
+const keywordInput = document.getElementById("search-input");
+const menus= document.querySelectorAll(".menus button");
+
+let keyword = '';
+const getNewsByKeyword =  async () => {
+    keyword = keywordInput.value.trim(); // Update the global 'keyword' variable
+    if (keyword.trim() === '') {
+        // Add a placeholder message to the input element
+        keywordInput.placeholder = 'Please enter a keyword';
+        return; // Stop further execution of the function
+    }
+    url.searchParams.set('q', keyword); // Set the 'q' parameter in the URL
+    url.searchParams.delete('category');
+    getNews();
+    keywordInput.value = ''; // Reset the input field value
+};
+
+
+
+const getNewsByCategory = (e) => {
+    try {
+          const category = e.target.textContent.toLowerCase();
+          url.searchParams.set('category', category);
+          url.searchParams.set('q', '');
+          getNews();
+      } catch (error) {
+        errorRender(error.message)
+    }
+};
 
 console.log(menus);
 
@@ -17,9 +45,7 @@ input_go.addEventListener('click', getNewsByKeyword);
 //1.버튼들에게 클릭 이벤트 줘야 한다.ok
 //input에 입력 하고 go 버튼을 눌른다.
 //
-const searchButton = document.getElementById("input_go");
-searchButton.addEventListener("click", () => {
-})
+
 let news=[];
 let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
 const getNews = async () => {
@@ -55,30 +81,6 @@ getLatestNews();
 //1.버튼들에게 클릭 이벤트 줘야 한다.ok
 //2.카테고리별 뉴스 가져오기
 //3.그뉴스를 보여주기
-
-const getNewsByCategory = (e) => {
-    try {
-            const category = e.target.textContent.toLowerCase();
-            url.searchParams.set('category', category);
-            url.searchParams.set('q', '');
-            getNews();
-      } catch (error) {
-        errorRender(error.message)
-    }
-};
-const getNewsByKeyword = () => {
-    keyword = keywordInput.value.trim(); // Update the global 'keyword' variable
-    if (keyword.trim() === '') {
-        // Add a placeholder message to the input element
-        keywordInput.placeholder = '키워드를 입력해주세요';
-        return; // Stop further execution of the function
-    }
-    url.searchParams.set('q', keyword); // Set the 'q' parameter in the URL
-    url.searchParams.delete('category');
-    getNews();
-    keywordInput.value = ''; // Reset the input field value
-};
-
 
 const render = () => {
     const newsHTML = newsList.map(news => {
