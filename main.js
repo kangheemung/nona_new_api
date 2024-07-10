@@ -2,24 +2,49 @@
 const API_KEY = `474e84f656e2471a85bcbe8ad971e094`;
 let newsList = [];
 const menus =document.querySelectorAll(".menus button");
+
 console.log(menus);
-  menus.forEach(menu => menu.addEventListener("click",(e) => getNewsByCategory(e)));
+
+menus.forEach(menu => menu.addEventListener("click",(e) => getNewsByCategory(e)));
+
+keywordInput.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        getNewsByKeyword();
+    }
+});
+
+input_go.addEventListener('click', getNewsByKeyword);
 //1.버튼들에게 클릭 이벤트 줘야 한다.ok
+//input에 입력 하고 go 버튼을 눌른다.
+//
+const searchButton = document.getElementById("input_go");
+searchButton.addEventListener("click", () => {
+})
+let news=[];
+let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
+const getNews = async () => {
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (response.status === 200) {
+            newsList = data.articles;
+            if (newsList.length === 0) {
+                errorRender("No matches for your search");
+            } else {
+                render();
+            }
+        } else {
+            throw new Error(data.message || `Error ${response.status}`);
+        }
+    } catch (error) {
+        errorRender(error.message);
+    }
+};
 
 const getLatestNews = async () => {
     const url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Failed to fetch news data');
-        }
-        const data = await response.json();
-        console.log(data);
-        newsList = data.articles;
-        render();
-    } catch (error) {
-        console.error('Error fetching or parsing data:', error.message);
-    }
+        url.searchParams.set('q', '');
+        await getNews();
 };
 getLatestNews();
       //  console.log(data);
@@ -32,18 +57,28 @@ getLatestNews();
 //3.그뉴스를 보여주기
 
 const getNewsByCategory = (e) => {
-    const category = e.target.textContent.toLowerCase();
-      console.log("category", category);
-    const url = new URL(
-        `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`
-    );
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            console.log("Data", data);
-        })
-        .catch(error => console.error('Error fetching or parsing data:', error.message));
+    try {
+            const category = e.target.textContent.toLowerCase();
+            url.searchParams.set('category', category);
+            url.searchParams.set('q', '');
+            getNews();
+      } catch (error) {
+        errorRender(error.message)
+    }
 };
+const getNewsByKeyword = () => {
+    keyword = keywordInput.value.trim(); // Update the global 'keyword' variable
+    if (keyword.trim() === '') {
+        // Add a placeholder message to the input element
+        keywordInput.placeholder = '키워드를 입력해주세요';
+        return; // Stop further execution of the function
+    }
+    url.searchParams.set('q', keyword); // Set the 'q' parameter in the URL
+    url.searchParams.delete('category');
+    getNews();
+    keywordInput.value = ''; // Reset the input field value
+};
+
 
 const render = () => {
     const newsHTML = newsList.map(news => {
@@ -71,6 +106,26 @@ const render = () => {
 
     document.getElementById("news-board").innerHTML = newsHTML;
   };
+  const errorRender = (errorMessage) => {
+    let errorText = '';
+    if(errorMessage.includes('400')) {
+        errorText = 'Bad Request 400 - The request cannot be fulfilled.';
+    } else if(errorMessage.includes('401')) {
+        errorText = 'Unauthorized - Authentication is required.';
+    } else if(errorMessage.includes('402')) {
+        errorText = 'Payment Required - Payment is required.';
+    }else if(errorMessage.includes('429')) {
+        errorText = 'Too many request'
+    } else if(errorMessage.includes('500')) {
+            errorText = 'server error.';
+    }
+    else {
+            errorText = 'No matches for your search.';
+        }
+    const errorHTML = `<div class="alert alert-danger" role="alert">${errorText}</div>`;
+    document.getElementById("news-board").innerHTML = errorHTML;
+};
+getLatestNews();
 //프린트해봅시다.
 
 
