@@ -40,7 +40,7 @@ hamburger.addEventListener('click', () => {
 
 side_menus.forEach(side_menu => side_menu.addEventListener("click", (e) => {
     getNewsByCategory(e); // Perform category selection action
-    document.querySelector('.sidebar').classList.remove('opened'); // Close the sidebar
+    document.querySelector('.side_menus').classList.remove('opened'); // Close the sidebar
 }));
 
 document.querySelector('.hamburger').addEventListener('click', function() {
