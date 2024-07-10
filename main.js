@@ -3,7 +3,11 @@ const API_KEY = `474e84f656e2471a85bcbe8ad971e094`;
 const input_go = document.getElementById("input_go");
 const keywordInput = document.getElementById("search-input");
 const menus= document.querySelectorAll(".menus button");
+const hamburger = document.getElementById('hamburger');
+const sidebar = document.querySelector('.sidebar');
+const side_menus = document.querySelectorAll(".side_menus"); // Update the class name to 'side_menus'
 
+const background = document.querySelector('.background');
 let keyword = '';
 const getNewsByKeyword =  async () => {
     keyword = keywordInput.value.trim(); // Update the global 'keyword' variable
@@ -18,8 +22,6 @@ const getNewsByKeyword =  async () => {
     keywordInput.value = ''; // Reset the input field value
 };
 
-
-
 const getNewsByCategory = (e) => {
     try {
           const category = e.target.textContent.toLowerCase();
@@ -30,8 +32,20 @@ const getNewsByCategory = (e) => {
         errorRender(error.message)
     }
 };
+hamburger.addEventListener('click', () => {
+    side_menus.forEach(side_menu => side_menu.classList.toggle('show')); 
+});
+//수정해보기 사이드바
 
-console.log(menus);
+
+side_menus.forEach(side_menu => side_menu.addEventListener("click", (e) => {
+    getNewsByCategory(e); // Perform category selection action
+    document.querySelector('.sidebar').classList.remove('opened'); // Close the sidebar
+}));
+
+document.querySelector('.hamburger').addEventListener('click', function() {
+    document.querySelector('.sidebar').classList.toggle('opened');
+});
 
 menus.forEach(menu => menu.addEventListener("click",(e) => getNewsByCategory(e)));
 
@@ -48,19 +62,20 @@ input_go.addEventListener('click', getNewsByKeyword);
 
 let news=[];
 let url = new URL(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`);
+
 const getNews = async () => {
     try {
         const response = await fetch(url);
         const data = await response.json();
         if (response.status === 200) {
-            newsList = data.articles;
-            if (newsList.length === 0) {
-                errorRender("No matches for your search");
+            if (data.articles.length === 0) {
+                errorRender('No matches for your search.');
             } else {
+                newsList = data.articles;
                 render();
             }
         } else {
-            throw new Error(data.message || `Error ${response.status}`);
+            throw new Error(data.message);
         }
     } catch (error) {
         errorRender(error.message);
@@ -109,24 +124,13 @@ const render = () => {
     document.getElementById("news-board").innerHTML = newsHTML;
   };
   const errorRender = (errorMessage) => {
-    let errorText = '';
-    if(errorMessage.includes('400')) {
-        errorText = 'Bad Request 400 - The request cannot be fulfilled.';
-    } else if(errorMessage.includes('401')) {
-        errorText = 'Unauthorized - Authentication is required.';
-    } else if(errorMessage.includes('402')) {
-        errorText = 'Payment Required - Payment is required.';
-    }else if(errorMessage.includes('429')) {
-        errorText = 'Too many request'
-    } else if(errorMessage.includes('500')) {
-            errorText = 'server error.';
-    }
-    else {
-            errorText = 'No matches for your search.';
-        }
-    const errorHTML = `<div class="alert alert-danger" role="alert">${errorText}</div>`;
+    const errorHTML = `<div class="alert alert-danger" role="alert">${errorMessage}</div>`;
     document.getElementById("news-board").innerHTML = errorHTML;
 };
+
+
+
+
 getLatestNews();
 //프린트해봅시다.
 
